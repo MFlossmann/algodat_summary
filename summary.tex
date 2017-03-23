@@ -14,7 +14,7 @@
 \usepackage{amsfonts}
 \usepackage{mathtools}
 \usepackage[a4paper,%
-top=20mm, bottom=20mm, left=15mm, right=20mm]{geometry}
+top=10mm, bottom=10mm, left=10mm, right=15mm]{geometry}
 % \usepackage{isodate}
 
 \graphicspath{{./images/}}
@@ -1242,6 +1242,8 @@ Resizing an array:
   \item Define a total order (e.g. $\le$, $\ge$)
   \item All nodes of the left subtree have \emph{smaller keys} than the current node.
   \item All nodes of the right subtree have \emph{bigger keys} than the current node.
+  \item The next highest element of the current node is the leftmost element from the left subtree.
+  \item The next lowest element of the current node is the rightmost element from the right subtree.
   \end{itemize}
   \begin{figure}[htbp]
     \centering
@@ -1317,6 +1319,172 @@ Resizing an array:
     \caption{Degenerated search tree}
   \end{figure}
 \end{itemize}
+
+\section{Balanced search trees}
+\label{sec:balanced_search_trees}
+\begin{itemize}
+\item How do we fix degenerated trees? $\rightarrow$ rebalancing!
+\item Rebalancing possibilities:
+  \begin{itemize}
+  \item AVL-Tree:
+    \begin{itemize}
+    \item Binary tree with 2 children per node
+    \item Balancing via ``rotation''
+    \end{itemize}
+  \item (a,b)-Tree, or B-Tree:
+    \begin{itemize}
+    \item Nodes have between $a$ and $b$ children
+    \item Balancing through \emph{splitting} and \emph{merging} nodes.
+    \item Used in data bases and file systems
+    \end{itemize}
+  \item Red-Black-Tree:
+    \begin{itemize}
+    \item Binary tree with black and red nodes
+    \item Balancing through \emph{rotation} and \emph{recoloring}
+    \item Can be interpreted as (2,4)-tree
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+\subsection{AVL-Tree}
+\label{sec:avl-tree}
+\begin{itemize}
+\item \textbf{A}delson-\textbf{V}elskii, \textbf{L}andis (1963)
+\item Search tree with modified \texttt{insert()} and \texttt{remove} operations, while satisfying a \emph{depth condition}.
+\item Prevents degeneration
+\item \textbf{Depth condition:} Highest possible height difference of left and right subtree = 1
+\item[$\implies$] Depth of tree is always $\bigO(\log n)$
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[b]{.3\textwidth}
+    \includegraphics[width=\textwidth]{avl_tree}
+    \caption{AVL tree}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.25\textwidth}
+    \includegraphics[width=\textwidth]{avl_tree_bad}
+    \caption{Not an AVL tree}
+  \end{subfigure}
+\end{figure}\newpage
+\item \textbf{Rotation:}
+  \begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\imgwidth]{rotation}
+    \caption{Rotation principle}
+    \label{fig:rotation}
+  \end{figure}
+
+  \begin{itemize}
+  \item \texttt{Parent-Child} relations are swapped for nodes which violate the depth-condition.
+  \item Attention: in this example, $x$'s smaller subtree becomes $y$'s larger subtree!
+  \end{itemize}
+\item If a height difference of $\pm2$ occurs after an \texttt{insert/remove}, the tree is rebalanced.
+\item \textbf{Disadvantages:}
+  \begin{itemize}
+  \item Update cost is no longer an amortized $\bigO(1)$!
+  \item More memory consumption for depth values
+  \end{itemize}
+\item[$\implies$] Better option: (a,b)-Trees, a.k.a. b-trees (b for ``balanced'')
+\end{itemize}
+\subsection{(a,b)-tree}
+\label{sec:ab-tree}
+\begin{itemize}
+\item \textbf{Principle}:
+  \begin{itemize}
+  \item Save a varying number of elements per node
+  \item All leaves have the same depth
+  \item Each inner node has $\ge a$ and $\le b$ nodes (exeption: root node)
+  \item Subtrees are located ``between'' the elements.
+  \item $a\ge 2, b\ge 2a-1$
+  \end{itemize}
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{2-4_tree}
+    \caption{Example of an (2,4)-tree}
+    \label{fig:2-4_tree}
+  \end{figure}
+\item \texttt{lookup}: Same as in binary search tree
+\item \texttt{insert}:
+  \begin{itemize}
+  \item Search the position to insert (always a leaf).
+  \item Insert node
+  \item Check if maximum number of nodes are exceeded.
+  \item If yes: Split the node!
+  \item[$\implies$] Two new nodes with $\ceil{\frac{b-1}{2}}$ and $\floor{\frac{b-1}{2}}$ elements.
+  \item Checking the maximum number of nodes cascades up.
+  \item If we have to split the root node, we create a new one afterwards.
+  \end{itemize}
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\imgwidth]{split_node}
+    \caption{Splitting a node}
+    \label{fig:split_node}
+  \end{figure}
+\item \texttt{remove}:
+  \begin{itemize}
+  \item Search the element ($\bigO(\log n)$)
+  \item Case 1: Element is contained by a leaf $\implies$ remove it!
+  \item Case 2: Contained by an inner node
+    \begin{itemize}
+    \item Search the \textbf{successor} in the \textbf{right} subtree. (leftmost element of rightmost subtree, always contained by a leaf)
+    \item Replace the element with its' successor and delete the successor from the leaf
+    \end{itemize}
+    \item \textbf{Attention:} If size of leaf $< a$!
+    \item[$\implies$] \textbf{Rebalance} the tree:
+      \begin{itemize}
+      \item Case 1: If the left or right neighbour node has leafs to spare, \textbf{get that one}
+        \begin{figure}[htbp]
+          \centering
+          \includegraphics[width=\imgwidth]{borrowing_element}
+          \caption{borrowing an element}
+          \label{fig:borrowing_element}
+        \end{figure}
+      \item Case 2: \textbf{Combine} the node with its' neighbour\\
+        \begin{figure}[htbp]
+          \centering
+          \includegraphics[width=\imgwidth]{combine_neighbour}
+          \caption{Combining with neighbour}
+          \label{fig:combine_neighbour}
+        \end{figure}
+        \textbf{Check if we have to cascade upwards!}
+      \item If the root has only one child left, that child can become root.
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+  
+\subsubsection*{Runtime of \texttt{lookup, insert} and \texttt{remove}}
+\begin{itemize}
+\item All operations: $\bigO(d), d:=$depth of the tree
+\item Each node (except root) has more than $a$ children\\
+  $\implies n\ge a^{d-1}$ and $d\le 1+\log_a n \in \bigO(\log_a n)$
+\item \texttt{lookup}: $\in\Theta(d)$
+\item \texttt{insert/remove}: often only in $\bigO(1)$
+\item Only in worst case, we have to split or combine all nodes cascading up to root
+\end{itemize}
+
+\subsubsection{Analysis of $b\ge2a$}
+\begin{itemize}
+\item nodes with \textbf{2, or 4 children} are expensive for delete and add respectively (borrowing, or splitting, possibly cascading up).
+\item[$\implies$] \textbf{3 children} are harmless:
+  \begin{itemize}
+  \item $\Phi_i$:= Potential of the tree after the $i$-th operation.
+  \item[=] the amount of harmless nodes (size 3)
+  \item After expensive operation the tree is in a stable state. %TODO: Include proof? Lecture 11
+  \item Takes some time until the next expensive operation occurs.
+  \item Same principle of dynamic arrays: \textbf{Overallocate} clever, to get an amortized runtime of $\bigO(1)$
+  \end{itemize}
+\end{itemize}
+
+\subsection{Red-Back-Tree}
+\begin{itemize}
+\item Binary tree with \textrm{red} and \textrm{black} nodes
+\item Number of black nodes on path to leaves is equal
+\item Can be interpreted as (2,4)-tree
+\end{itemize}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\imgwidth]{red-black_tree}
+  \caption{Example of a red-black-tree}
+  \label{fig:red-black_tree}
+\end{figure}
 
 \end{document}
 
