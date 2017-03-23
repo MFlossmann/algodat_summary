@@ -7,6 +7,8 @@
 \usepackage{color}
 \usepackage{xcolor}
 \usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{algorithm2e}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -1234,7 +1236,87 @@ Resizing an array:
 
 \section{Binary search tree}
 \label{sec:binary_search_tree}
-
+\begin{itemize}
+\item \textbf{Principle}:
+  \begin{itemize}
+  \item Define a total order (e.g. $\le$, $\ge$)
+  \item All nodes of the left subtree have \emph{smaller keys} than the current node.
+  \item All nodes of the right subtree have \emph{bigger keys} than the current node.
+  \end{itemize}
+  \begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{.4\textwidth}
+      \includegraphics[width=\textwidth]{search_tree_ref}
+      \caption{Binary search tree with references}
+      \label{fig:binary_search_tree}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{.47\textwidth}
+      \includegraphics[width=\textwidth]{search_tree_linked}
+      \caption{Binary search tree with doubly linked list}
+    \end{subfigure}
+  \end{figure}
+\item \textbf{Runtime:}
+  \begin{itemize}
+  \item \texttt{next/previous}: $\bigO(1)$
+  \item \texttt{insert/remove}: $\bigO(\log n)$
+  \item \texttt{lookup:} up to $\Theta(n)$
+  \end{itemize}
+\item \textbf{Implementation}:
+  \begin{itemize}
+  \item We link all nodes through pointers/references
+  \item Each node has a pointer/reference to its' children (\texttt{leftChild/rightChild})
+  \end{itemize}
+\item Implementation on steroids (with links):
+  \begin{itemize}
+  \item Sorted doubly linked list of all elements
+  \item[$\implies$] Efficient implementation of \texttt{next/previous}
+  \end{itemize}
+\item \texttt{Lookup(key)}: ``Search element. If not found, return element with next (bigger) key''
+  \begin{itemize}
+  \item Start at root
+  \item Go down left/right recursively until found, or \texttt{None}
+  \item If \texttt{None}: return next biggest element
+  \end{itemize}
+\item \texttt{Insert(key, value)}:
+  \begin{itemize}
+  \item Search for key in tree
+  \item If found: $\rightarrow$ replace value with the new one
+  \item Else: insert new node at the corresponding \texttt{None} entry
+  \end{itemize}
+\item \texttt{Remove(key)}: (quite tricky)
+  \begin{enumerate}
+  \item Node has no \texttt{children}:
+    \begin{itemize}
+    \item Find \texttt{parent} of the node.
+    \item Set the left/right \texttt{child} of the \texttt{parent} node to \texttt{None}.
+    \end{itemize}
+  \item Node has one \texttt{child}:
+    \begin{itemize}
+    \item Find the \texttt{child} of the node.
+    \item Find the \texttt{parent} of the node.
+    \item set the left/right \texttt{child} of the \texttt{parent} node to the node's \texttt{child}.
+    \end{itemize}
+  \item Node has two children
+    \begin{itemize}
+    \item Find the nodes' \texttt{successor}.
+    \item Replace the node with its' \texttt{successor}
+    \item Delete the \texttt{successor}
+    \end{itemize}
+\end{enumerate}
+\item Runtime of \texttt{insert()} and \texttt{lookup()}:
+  \begin{itemize}
+  \item Up to $\Theta(d)$ ($d:=$ depth of the tree)
+  \item Best case $d=\log n$: $\Theta(\log n)$
+  \item Worst case $d=n$: $\Theta(n)$ (tree degenerated)
+  \item For consistent runtime of $\Theta(\log n)$, we have to \emph{rebalance} the tree.
+  \end{itemize}
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[height=20mm]{search_tree_degenerated}
+    \caption{Degenerated search tree}
+  \end{figure}
+\end{itemize}
 
 \end{document}
 
