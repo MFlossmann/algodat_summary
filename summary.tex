@@ -92,7 +92,7 @@ Problem:
   \caption{minsort()}
 \end{listing}
 \subsection{Heapsort}
-\label{sec:minsort}
+\label{sec:heapsort}
 % \begin{table}[!h]
 %   \centering
 %   \begin{tabular}{lc}
@@ -221,7 +221,6 @@ Formal:
 \]
 
 \subsection{Summary}
-\label{sec:O-notation}
 \begin{itemize}
 \item With $\bigO$ notation we're interested in $n\rightarrow\infty$. 
 \item $\bigO$ only applies for $n\ge n_0$.
@@ -750,7 +749,7 @@ Resizing an array:
       \centering
       \includegraphics[width=\imgwidth]{bad_locality}
       \caption{Bad locality of sum operation}
-      \label{fig:good_locality}
+      \label{fig:bad_locality}
     \end{figure}
   \item Usually, the factor is substantially $< B$ (we might be lucky about the block position)
   \end{itemize}
@@ -829,7 +828,6 @@ Resizing an array:
 \end{itemize}
 
 \subsubsection{Features}
-\label{sec:O-notation}
 \begin{itemize}
 \item Requirements:
   \begin{itemize}
@@ -848,7 +846,6 @@ Resizing an array:
 \end{itemize}
   
 \subsubsection{Implementation}
-\label{sec:O-notation}
 \begin{itemize}
 \item Smaller subproblems are elegant and simple, or it would be better to solve bigger subproblems directly.
 \item Recursion depth shouldn't get too big (stack/memory overhead).
@@ -856,7 +853,6 @@ Resizing an array:
 % TODO: Maybe add the maximum subtotal example?
 
 \subsubsection{Example: Maximum subtotal}
-\label{sec:O-notation}
 \begin{enumerate}
 \item Split sequence in the middle
 \item Solve both halves
@@ -1473,7 +1469,7 @@ Resizing an array:
   \end{itemize}
 \end{itemize}
 
-\subsection{Red-Back-Tree}
+\subsection{Red-Black-Tree}
 \begin{itemize}
 \item Binary tree with \textrm{red} and \textrm{black} nodes
 \item Number of black nodes on path to leaves is equal
@@ -1481,10 +1477,86 @@ Resizing an array:
 \end{itemize}
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=\imgwidth]{red-black_tree}
+  \includegraphics[width=0.5\textwidth]{red-black_tree}
   \caption{Example of a red-black-tree}
   \label{fig:red-black_tree}
 \end{figure}
+
+\section{Graphs}
+\label{sec:graphs}
+
+\begin{itemize}
+\item \textbf{Terminology:}
+  \begin{itemize}
+  \item Each Graph $G=(V,E)$ consists of:
+    \begin{itemize}
+    \item A set of vertices (nodes) $V=\{v_1,v_2,...\}$
+    \item A set of edges (arcs) $E=\{e_1, e_2,...\}$
+    \end{itemize}
+  \item Each edge \cite{} onnects two verices ($u,v\in V$):
+    \begin{itemize}
+    \item Undirected edge: $e=\{u,v\}$ (set)
+    \item Directed edge: $e=(u,v) (tuple)$
+    \end{itemize}
+  \item Self-loops are possible: $e=\{u,u\}$
+  \end{itemize}
+\item \textbf{Weighted graph:} Each edge is marked with a real number (weight)
+\item \textbf{Representation:}
+  \begin{itemize}
+  \item \emph{Adjacency matrix}, space consumption: $\Theta(|V|^2)$
+  \item \emph{Adjacency list/field}, space consumption $\Theta(|V|+|E|)$\\
+    Each list item stores the target vertice and the cost of the edge.
+  \item Both representations fully define the graph. Visualisation doesn't matter.
+    \begin{figure}[htbp]
+      \centering
+      \begin{subfigure}[b]{.2\textwidth}
+        \includegraphics[width=\textwidth]{example_graph}
+        \caption{Weighted graph\\ $|V|=4, |E|=6$}
+      \end{subfigure}~
+      \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{adjacency_matrix}
+        \caption{Adjacency matrix}
+      \end{subfigure}~
+      \begin{subfigure}[b]{0.25\textwidth}
+        \includegraphics[width=\textwidth]{adjacency_list}
+        \caption{Adjacency matrix}
+      \end{subfigure}
+    \end{figure}
+  \end{itemize}
+\item Degree of a vertex (directed):
+  \begin{itemize}
+  \item \emph{Indegree} of a vertex is the number of edges going \textbf{into} the vertex
+  \item \emph{Outdegree} of a vertex is the number of edges going \textbf{out} the vertex
+  \end{itemize}
+\item Degree of a vertex (undirected)\\
+  Number of \textbf{vertices} adjacent to the vertex
+\item \emph{Paths}
+  \begin{itemize}
+  \item Sequence of edges $u_1,u_2,...,u_i\in V$
+  \item \emph{Length} of path:
+    \begin{itemize}
+    \item Unweighted: Number of edges taken
+    \item Weighted: Sum of weights of edges taken
+    \end{itemize}
+  \end{itemize}
+\item \emph{Diameter} of graph: Length/cost of the \textbf{longest shortest path}
+\item \emph{Connected componend}: Part of graph where paths between the verteces exist
+\end{itemize}
+% TODO: DFS and BFS are too trivial
+
+\subsection{Runtime complexity}
+\begin{itemize}
+\item Constant costs for each visited vertex and edge
+\item Runtime complexity: $\Theta(|V'|+|E'|)$
+\item $V',E'$: Reachable vertices and edges
+\item $V'$: Connected component of start vertex $s$
+\item Can only be improved by a constant factor.
+\end{itemize}
+
+\section{Dijkstra's Algorithm}
+\label{sec:O-notation}
+
+
 
 \end{document}
 
