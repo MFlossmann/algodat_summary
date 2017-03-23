@@ -1,0 +1,7 @@
+*~
+.aux
+*.aux
+*.log
+_region_.tex
+auto
+*.toc
