@@ -983,7 +983,7 @@ Resizing an array:
 \item Appoach to solve for a recursion equation of the form:
   \begin{equation}
     \label{eq:master_theorem_basic}
-    \boxed{T(n)=a\cdot T\left( \frac{n}{b} \right)+f(n),\quad a\le 1, b< 1}
+    \boxed{T(n)=a\cdot T\left( \frac{n}{b} \right)+f(n),\quad a\ge 1, b> 1}
   \end{equation}
 \item $T(n)$ is the runtime of an algorithm
   \begin{itemize}
@@ -1555,8 +1555,80 @@ Resizing an array:
 
 \section{Dijkstra's Algorithm}
 \label{sec:O-notation}
+Algorithm for finding the shortest path in a graph
+\begin{enumerate}
+\item Every node gets a tenative distance value:
+  \begin{itemize}
+  \item 0 for the initial node
+  \item $\infty$ for every other node
+  \end{itemize}
+\item Set initial node as current. All other nodes are unvisited and are put in the \emph{unvisited set} ($\rightarrow$\texttt{Implement this as a priority queue!}).\footnote{When updating the priority in the queue, we don't actually have to delete the old node. Just insert the node with a lower priority. The old one will never be visited... actually, this won't work all the time. :/}
+\item Calculate distances for all neighboring nodes of the current node. The new tentative distance is the smaller one of the current and the new. Also, note the node which lead to the node in the shorter path.
+\item When every neighboring node are checked, mark them as visited
+\item If the destination node has been marked visited, or if all unvisited nodes are distance $\infty$(i.e. unvisited nodes unreachable), \textbf{STOP}, we're done!
+\item Otherwise, select the unvisited node with the smallest tentative distance, make it the new current node and go back to step 3.
 
+\end{enumerate}
 
+\section{Edit distance (\textsc{Levenshtein-distance})}
+\begin{itemize}
+\item Measurement for similarity of two words/strings
+\item $x,y$: two strings
+\item $ED(x,y):=$ Minimal number of operations to transform $x$ to $y$
+  \begin{itemize}
+  \item \texttt{insert} a character
+  \item \texttt{delete} a character
+  \item \texttt{replace} a character
+  \end{itemize}
+\item Definitions:
+  \begin{itemize}
+  \item $\varepsilon$: Empty word
+  \item $|x|$: Length of x
+  \end{itemize}
+
+\item Trivial:
+  \begin{itemize}
+  \item $ED(x,y)=ED(y,x)$
+  \item $ED(x,\varepsilon)=|x|$
+  \item $ED(x,y)\ge \mathrm{abs}(|x|-|y|)$
+  \item $ED(x,y)\le ED(x[1..|x|-1],y[1..|y|-1]) + 1$
+  \end{itemize}
+\item We only consider \emph{monotonous} sequences, \\
+  i.e. The position $\sigma_{i+1}>$ the position of $\sigma_i$ ($\ge$ for a \texttt{delete} operation)
+\item \textbf{Bellman's principle of optimality}:\\
+  Optimal solutions consist of optimal partial solutions
+  \begin{itemize}
+  \item Shortest paths: Each partial path has to be optimal.
+  \item Edit distance: Each partial alignment has to be optimal.
+  \end{itemize}
+\item Recursive formula: $ED(x,y)$ is the minimum of
+  \begin{align*}
+   ED&(x\qquad\qquad,y[1..m-1])+1\quad\mathrm{and}\\
+    ED&(x[1..n-1],y)+1\quad\mathrm{and}\\
+    ED&(x[1..n-1],y[1..m-1])+1\mathrm{if\ }x[n]\ne y[m]\\
+    ED&(x[1..n-1],y[1..m-1])+0\mathrm{if\ }x[n]= y[m]\\
+  \end{align*}
+\item For $|x|=0$: $ED(x,y)=|y|$ and vice versa
+
+\end{itemize}% TODO Maybe finish this... although I don't know how, exactly
+
+\section{Dynamic programming}
+\label{sec:dynamic_programming}
+\begin{itemize}
+\item Avoid repeated computation of the same problem:
+\item Create a table with all possible combinations of substrings and save calculated entries.
+\item[$\implies$] Runtime and space consumption of $\bigO(|x|\cdot |y|)$
+\item Each grid has the value of the minimum steps to create it with \texttt{insert, delete}, or \texttt{replace}
+\item Reverse search from $(|x|,|y|)$ to $(1,1)$ to get the optimum operations to transform $x$ to $y$
+\item This computes all partial problems
+\item Path to the solution usually gets computed while searching for the best solution.% Whatever that means...
+\end{itemize}
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{levenshtein_matrix}
+  \caption{Levenshtein-Matrix for Grau->Raub}
+  \label{fig:levenshtein}
+\end{figure}
 
 \end{document}
 
